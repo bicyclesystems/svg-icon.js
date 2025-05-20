@@ -341,12 +341,14 @@
       super()
     }
 
-    connectedCallback() {
-      if (this.childNodes[0] && this.childNodes[0].childNodes.length) return
+    static get observedAttributes() {
+      return ['src']
+    }
 
-      if (this.innerHTML.includes(`<img`)) {
-        return
-      }
+    updateIcon() {
+      console.log('updateIcon')
+      // Clear existing content
+      this.innerHTML = ''
 
       const src = this.hasAttribute('src') ? this.getAttribute('src') : config.src.replace(/\/$/, '') + '/' + this.innerHTML.replace(/\s+/g, "") + '.svg'
 
@@ -362,8 +364,20 @@
 
       this.replaceChildren(icon)
     }
+
+    connectedCallback() {
+      this.updateIcon()
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+      if (name === 'src' && oldValue !== newValue) {
+        this.updateIcon()
+      }
+    }
   }
-  customElements.define('svg-icon', SVGIcon)
+  if (!customElements.get('svg-icon')) {
+    customElements.define('svg-icon', SVGIcon);
+  }
 
   const tid = setInterval(() => {
     if (document.readyState !== 'complete') return
