@@ -8,6 +8,8 @@ on:
 jobs:
   version-check:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       changed: ${{ steps.version.outputs.changed }}
       version: ${{ steps.version.outputs.version }}
@@ -27,6 +29,8 @@ jobs:
     needs: version-check
     if: needs.version-check.outputs.changed == 'true'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Create Tag and GitHub Release
         if: needs.version-check.outputs.changed == 'true'
