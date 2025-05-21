@@ -2,7 +2,7 @@ name: Publish NPM Package
 
 on:
   release:
-    types: [created]
+    types: [created, published]
 
 jobs:
   build:
@@ -12,6 +12,11 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+      - name: Debug Event
+        run: |
+          echo "Event name: ${{ github.event_name }}"
+          echo "Event type: ${{ github.event.action }}"
+          echo "Ref: ${{ github.ref }}"
       - uses: actions/setup-node@v4
         with:
           node-version: "20.x"
@@ -25,6 +30,11 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+      - name: Debug Package Version
+        run: |
+          echo "Package version from package.json:"
+          cat package.json | grep version
+          echo "Git ref: ${{ github.ref }}"
       - uses: actions/setup-node@v4
         with:
           node-version: "20.x"
