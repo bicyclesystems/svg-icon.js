@@ -38,5 +38,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          tag_name: v${{  needs.version-check.outputs.version }}
-          release_name: Release v${{  needs.version-check.outputs.version }}
+          tag_name: v${{ needs.version-check.outputs.version }}
+          release_name: Release v${{ needs.version-check.outputs.version }}
+          draft: false
+          prerelease: false
