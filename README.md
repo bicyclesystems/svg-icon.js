@@ -15,18 +15,21 @@ Web component for SVG icons. Works in any web framework and for any purpose. Opt
    ```
    npm i @rnbws/svg-icon.js
    ```
-2. Use `/svg-icon.config.json` in your root directory and set the default `source`.
+2. Set the `src-path` attribute in your script tag to define the default source:
 
-   You can use relative path based on the root directory
+   You can use relative path based on the root directory:
 
    ```html
-   { "src": "icons/" }
+   <script src="svg-icon.js" src-path="icons/"></script>
    ```
 
-   It can be also any other CDN
+   It can be also any other CDN:
 
    ```html
-   { "src": "https://raincons.rnbw.dev/" }
+   <script
+     src="svg-icon.js"
+     src-path="https://raincons.rnbw.dev/icons"
+   ></script>
    ```
 
 3. Enjoy icons/icons.html to view all your icons in a simple, organized, and searchable manner.
@@ -38,17 +41,17 @@ Web component for SVG icons. Works in any web framework and for any purpose. Opt
    │  ├─ icon2.svg
    │  ├─ icon3.svg/
    ```
-   You’re ready to go!
+   You're ready to go!
 
 ## Usage
 
-1. Set the `icon-name` within the element’s content.
+1. Set the `icon-name` within the element's content.
 
    ```html
    <svg-icon>arrow</svg-icon>
    ```
 
-   Or, you can do `folder/icon-name` if you’ve categorized your library into folders.
+   Or, you can do `folder/icon-name` if you've categorized your library into folders.
 
    ```html
    <svg-icon>arrows/right</svg-icon>
@@ -94,7 +97,7 @@ Visit [svg-icon.fyi](https://svg-icon.fyi) to view the full documentation.
 
 The svg-icon.js community can be found on [GitHub Discussions](https://github.com/rnbwdev/svg-icon.js/discussions), where you can ask questions, voice ideas, and share your projects.
 
-Join [Rainbow&#39;s Discord](https://discord.com/invite/HycXz8TJkd) to chat with other community members about svg-icon.js.
+Join [Rainbow's Discord](https://discord.com/invite/HycXz8TJkd) to chat with other community members about svg-icon.js.
 
 ## Contributing
 

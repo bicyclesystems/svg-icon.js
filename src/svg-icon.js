@@ -303,52 +303,28 @@
     'object' == typeof module && 'object' == typeof module.exports && (module.exports = e)
   })(window, document)
 
-  const configFileName = 'svg-icon.config.json'
-  let config = {
-    src: './'
-  }
-
-  const findConfig = async (href) => {
-    let hArr = href.split('/')
-    hArr.pop()
-    let currentDirUrl = hArr.join('/')
-    if (currentDirUrl === '') {
-      return null
-    }
-    let currentDirConfigUrl = `${currentDirUrl}/${configFileName}`
-
-    let config
-    await fetch(currentDirConfigUrl, { method: 'GET' })
-      .then(res => res.json())
-      .then(configFileContent => {
-        config = configFileContent
-      })
-      .catch(err => {
-        config = null
-      })
-
-    return config || findConfig(currentDirUrl)
-  }
-
-  const currentHtmlHref = window.location.href
-  const configFileData = await findConfig(currentHtmlHref)
-  if (configFileData) {
-    config = configFileData
-  }
+  // Get base path from script attribute
+  const currentScript = document.currentScript
+  const basePath = currentScript?.getAttribute('src-path') || './'
 
   class SVGIcon extends HTMLElement {
     constructor() {
       super()
     }
 
-    connectedCallback() {
-      if (this.childNodes[0] && this.childNodes[0].childNodes.length) return
+    static get observedAttributes() {
+      return ['src']
+    }
 
-      if (this.innerHTML.includes(`<img`)) {
-        return
-      }
+    updateIcon() {
+      // Clear existing content
+      const iconName = this.innerHTML.trim()
+      this.innerHTML = ''
 
-      const src = this.hasAttribute('src') ? this.getAttribute('src') : config.src.replace(/\/$/, '') + '/' + this.innerHTML.replace(/\s+/g, "") + '.svg'
+      // Use direct src attribute or construct path from base path
+      const src = this.hasAttribute('src') ?
+        this.getAttribute('src') :
+        `${basePath.replace(/\/$/, '')}/${iconName}.svg`
 
       const cssObj = getComputedStyle(this)
       const _width = parseInt(cssObj.width) || 0
@@ -357,13 +333,37 @@
       const icon = new Image(...(_width === 0 || _height === 0 ? [] : [_width, _height]))
       icon.src = src
       icon.onload = () => {
-        SVGInject(icon)
+        SVGInject(icon, {
+          useCache: true,
+          copyAttributes: true,
+          makeIdsUnique: true,
+          beforeInject: function (img, svg) {
+            if (_width !== 0 && _height !== 0) {
+              svg.setAttribute('width', _width);
+              svg.setAttribute('height', _height);
+            }
+            return svg;
+          }
+        })
       }
 
       this.replaceChildren(icon)
     }
+
+    connectedCallback() {
+      this.updateIcon()
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+      if (name === 'src' && oldValue !== newValue) {
+        this.updateIcon()
+      }
+    }
   }
-  customElements.define('svg-icon', SVGIcon)
+
+  if (!customElements.get('svg-icon')) {
+    customElements.define('svg-icon', SVGIcon);
+  }
 
   const tid = setInterval(() => {
     if (document.readyState !== 'complete') return
